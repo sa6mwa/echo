@@ -4,7 +4,7 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 COPY cmd cmd
-RUN GOOS_ENABLED=0 go build -v -ldflags '-s' -o ./echo ./cmd/echo
+RUN CGO_ENABLED=0 go build -v -ldflags '-s' -o ./echo ./cmd/echo
 
 FROM alpine
 EXPOSE 8080
