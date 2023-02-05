@@ -19,11 +19,18 @@ Usage of ./echo:
         Port to listen to (default 8080)
 ```
 
+## Install
+
+```console
+$ go install github.com/sa6mwa/echo/cmd/echo@latest
+```
+
 ## Build
 
-There is a `Makefile` to make life more files. `make` will run targets `clean`
-and `build`. You will required Golang installed on your system. There is also a
-Docker build using an intermediate build image (golang:1.19-alpine)...
+There is a `Makefile`. `make` will run targets `clean` and `build`. You need
+[Go](https://go.dev) installed on your system. There is also `make docker` which
+is using an intermediate build image (`golang:1.19-alpine`) to compile the
+app...
 
 ```console
 $ make
@@ -31,14 +38,15 @@ rm -f echo
 CGO_ENABLED=0 go get -v -d ./...
 CGO_ENABLED=0 go test -cover ./...
 ?       github.com/sa6mwa/echo/cmd/echo [no test files]
-CGO_ENABLED=0 go build -v -ldflags '-s -X main.version=0' -o echo github.com/sa6mwa/echo/cmd/echo
+CGO_ENABLED=0 go build -v -ldflags=-s -o echo github.com/sa6mwa/echo/cmd/echo
+github.com/sa6mwa/echo/cmd/echo
 
 # Docker build
 
 $ make docker
-docker build -t echo:latest .
-Sending build context to Docker daemon  5.369MB
-Step 1/13 : FROM golang:1.19-alpine AS builder
+docker build --network none --build-arg "VERSION=c5e0ab8-dirty"  -t echo:latest .
+Sending build context to Docker daemon  5.398MB
+Step 1/16 : FROM golang:1.19-alpine AS builder
 .
 .
 .
@@ -53,7 +61,7 @@ If you would like another tag, you can change repository and tag using the
 Makefile variables `REPO` and `TAG`...
 
 ```console
-$ make docker REPO=my-ecr-registry/echo TAG=0
+$ make docker REPO=my-ecr-registry/echo TAG=v0.1.0
 .
 .
 .
@@ -61,13 +69,16 @@ Step 13/13 : ENTRYPOINT [ "/app/echo" ]
  ---> Using cache
  ---> fe7bb4f7d65a
 Successfully built fe7bb4f7d65a
-Successfully tagged my-ecr-registry/echo:0
+Successfully tagged my-ecr-registry/echo:v0.1.0
 ```
 
 From here you can push the image to your target repository...
 
 ```console
-$ docker push my-ecr-registry/echo:latest
+# Assuming latest tag was not used...
+$ docker tag echo:v0.1.0 my-ecr-registry/echo:v0.1.0
+$ docker tag echo:v0.1.0 my-ecr-registry/echo:latest
+$ docker push my-ecr-registry/echo
 ```
 
 ## Examples
@@ -76,11 +87,12 @@ Using `-httpcounter` with the docker container...
 
 ```
 $ docker run -ti echo -httpcounter
+2023/02/05 19:21:42 github.com/sa6mwa/echo version c5e0ab8-dirty
 
    ____    __
   / __/___/ /  ___
  / _// __/ _ \/ _ \
-/___/\__/_//_/\___/ v4.9.0
+/___/\__/_//_/\___/ v4.10.0
 High performance, minimalist Go web framework
 https://echo.labstack.com
 ____________________________________O/_______
