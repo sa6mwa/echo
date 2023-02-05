@@ -78,7 +78,7 @@ func main() {
 		version = append(version, versionOverride)
 	} else {
 		if gotBuildInfo {
-			if bi.Main.Version != "" {
+			if bi.Main.Version != "" && bi.Main.Version != "(devel)" {
 				version = append(version, bi.Main.Version)
 			}
 			for _, setting := range bi.Settings {

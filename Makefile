@@ -18,7 +18,7 @@ test:
 	$(GO) test -cover ./...
 
 $(NAME):
-	$(GO) build -v -ldflags=-s -o $(NAME) $(SRC)
+	$(GO) build -buildvcs=true -v -ldflags=-s -o $(NAME) $(SRC)
 
 go.mod:
 	go mod init $(MODULE)
